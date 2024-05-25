@@ -47,5 +47,8 @@ async def download_file(callback: types.CallbackQuery, callback_data: ObjectData
 
     zip_file = await download_file_magnet(magnet, internal_id)
     file = BufferedInputFile.from_file(path=zip_file.file_path, filename=zip_file.file_name)
-    await callback.message.answer_document(file)
+    try:
+        await callback.message.answer_document(file)
+    except Exception as error:
+        print('so unlack')
     shutil.rmtree(zip_file.delete_path)

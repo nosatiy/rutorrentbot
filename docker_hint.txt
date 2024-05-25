@@ -1,0 +1,2 @@
+docker build -t rutorrentbot .
+docker run --rm -it --name rutorrentbot --env-file=./.env -d rutorrentbot:latest
