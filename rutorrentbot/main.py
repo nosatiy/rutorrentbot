@@ -1,6 +1,5 @@
 import asyncio
-
-from loader import bot, dp
+from bot.bot import bot, dp
 
 async def start_bot():
     await dp.start_polling(bot)

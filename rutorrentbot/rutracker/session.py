@@ -1,12 +1,11 @@
 import asyncio
 import httpx
-import os
-
 from typing import Optional
 
 from settings import secret
-from rutracker.parser import search_parser, obgject_parser
+from rutracker.parser import search_parser, object_parser
 from rutracker.models import FoundFile
+
 
 class RTClientSession:
 
@@ -16,12 +15,13 @@ class RTClientSession:
 
 
     async def login(self,):
+        self.client_session = httpx.AsyncClient()
         body = {"login_username": secret.rutracker_login, "login_password": secret.rutracker_password, "login": "Вход"}
         method_url = self.rutracker_forum_url + '/login.php'
         response = await self.client_session.post(url=method_url, data=body)
         if response.status_code != 302:
             await self.close_session()
-            exit(1)
+            # exit(1)
 
     async def search(self, search_string: str, light_search=True) -> Optional[list[FoundFile]]:
         method_url = self.rutracker_forum_url + f'/tracker.php?nm={search_string}'
@@ -39,14 +39,14 @@ class RTClientSession:
         await asyncio.gather(*tasks)
         return search_result
 
-        
+
     async def update_search_info(self, page: FoundFile):
         method_url = self.rutracker_forum_url + f'/{page.object_link}'
         response = await self.client_session.get(url=method_url)
         if response.status_code != 200:
             print('bad get object')
             print(response.status_code)
-        object_data = obgject_parser(response.text)
+        object_data = object_parser(response.text)
         if not object_data:
             print('No page data')
         page.object_data = object_data['data']
@@ -59,7 +59,7 @@ class RTClientSession:
         if response.status_code != 200:
             print('bad get object')
             print(response.status_code)
-        object_data = obgject_parser(response.text)
+        object_data = object_parser(response.text)
         if not object_data:
             return
         if target == 'data':
@@ -70,11 +70,10 @@ class RTClientSession:
 
     async def close_session(self,):
         await self.client_session.aclose()
-
-    async def reconncet(self,):
-        await self.close_session()
         del self.client_session
-        self.client_session = httpx.AsyncClient()
+
+    async def reconnect(self,):
+        await self.close_session()
         await self.login()
 
 ru_session = RTClientSession()

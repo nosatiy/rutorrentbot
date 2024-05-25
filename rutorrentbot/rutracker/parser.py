@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup as bs
 from rutracker.models import FoundFile
 from typing import Optional
 
+
 def search_parser(html_page: str) -> Optional[list[FoundFile]]:
     results = []
     bs_parser = bs(html_page, 'html.parser')
@@ -25,7 +26,7 @@ def search_parser(html_page: str) -> Optional[list[FoundFile]]:
 
     return results
 
-def obgject_parser(html_page: str) -> Optional[dict]:
+def object_parser(html_page: str) -> Optional[dict]:
     soup = bs(html_page, 'html.parser')
     div = soup.find_all('span', class_='post-b')
     data = {}
@@ -41,4 +42,3 @@ def obgject_parser(html_page: str) -> Optional[dict]:
         if br.text == 'Описание':
             break
     return {'data': data, 'magnet_link': magnet_link}
-    
