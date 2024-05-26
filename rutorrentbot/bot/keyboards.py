@@ -1,7 +1,8 @@
 from aiogram import types
 
 from bot.models import ObjectData
-from rutracker.models import FoundFile 
+from rutracker.models import FoundFile
+
 
 def get_keyboard(object_data: FoundFile):
 

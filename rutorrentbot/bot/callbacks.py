@@ -6,7 +6,9 @@ from bot.models import ObjectData
 from rutracker.session import ru_session
 from torrent.ptorrent import download_file_magnet
 
+
 callbacks_router = Router()
+
 
 @callbacks_router.callback_query(ObjectData.filter(F.action == "cb_more_info"))
 async def send_more_info(callback: types.CallbackQuery, callback_data: ObjectData):
@@ -31,17 +33,18 @@ async def download_file(callback: types.CallbackQuery, callback_data: ObjectData
 
     size_args = callback_data.file_size.strip().replace('\xa0', ' ').split(' ')
 
-    if len(size_args) != 2 or float(size_args[0]) > 100.0 or  size_args[1].lower() != 'mb':
-        await callback.answer('Что-то допизды весит, брат', show_alert=True)
-        return
-
     internal_id = f'{callback.message.chat.id}_{callback.message.message_id}'
 
     magnet = await ru_session.get_object_info(callback_data.page_link, target='magnet')
     if not magnet:
         await callback.answer('Произошел анлак', show_alert=True)
         return
-    
+
+    if len(size_args) != 2 or float(size_args[0]) > 100.0 or  size_args[1].lower() != 'mb':
+        await callback.answer('Что-то допизды весит, брат, держи ссылку', show_alert=True)
+        await callback.message.answer(magnet)
+        return
+
     await callback.answer('Пошла закачка, дай бог скачается!', show_alert=True)
     await callback.message.edit_text(text=callback.message.text)
 

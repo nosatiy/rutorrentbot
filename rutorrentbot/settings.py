@@ -13,4 +13,4 @@ class Secret:
     rutracker_login: str = os.environ.get('rutracker_login')
     rutracker_password: str = os.environ.get('rutracker_password')
 
-secret = Secret() 
+secret = Secret()
