@@ -1,4 +1,5 @@
 import shutil
+import logging
 from aiogram import types, F, Router
 from aiogram.types import BufferedInputFile
 
@@ -40,9 +41,10 @@ async def download_file(callback: types.CallbackQuery, callback_data: ObjectData
         await callback.answer('Произошел анлак', show_alert=True)
         return
 
-    if len(size_args) != 2 or float(size_args[0]) > 100.0 or  size_args[1].lower() != 'mb':
+    if len(size_args) != 2 or float(size_args[0]) > 50.0 or  size_args[1].lower() != 'mb':
         await callback.answer('Что-то допизды весит, брат, держи ссылку', show_alert=True)
         await callback.message.answer(magnet)
+        await callback.message.edit_text(text=callback.message.text)
         return
 
     await callback.answer('Пошла закачка, дай бог скачается!', show_alert=True)
@@ -53,5 +55,6 @@ async def download_file(callback: types.CallbackQuery, callback_data: ObjectData
     try:
         await callback.message.answer_document(file)
     except Exception as error:
-        print('so unlack')
+        logging.error(error)
+        await callback.message.answer(f'Telegram не хочет тебе отправлять {zip_file.file_name}')
     shutil.rmtree(zip_file.delete_path)
