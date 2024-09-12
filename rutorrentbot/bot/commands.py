@@ -18,8 +18,16 @@ async def cmd_add_user(
     message: types.Message,
     command: CommandObject,
     ):
+    add_id = int(command.args)
+    
+    if add_id in approved_users:
+        await message.answer('Юзер уже добавлен')
+        return
+    if message.from_user.id != 507541585:
+        await message.answer('У тебя нет прав, шалунишка!')
+        return
     try:
-        approved_users.add(int(command.args))
+        approved_users.add(add_id)
         await message.answer("User added!")
     except:
         await message.answer("Some error in add user!")
