@@ -1,11 +1,12 @@
 from aiogram import BaseMiddleware
 from aiogram.types import Message
 from typing import Callable, Dict, Any, Awaitable
+from bot.models import approved_users 
 
 
 class GoAwayMiddleware(BaseMiddleware):
     def __init__(self) -> None:
-        self.approved_users = (507541585, 148554314, 31739163)
+        self.approved_users = approved_users
 
     async def __call__(
         self,
@@ -13,7 +14,7 @@ class GoAwayMiddleware(BaseMiddleware):
         event: Message,
         data: Dict[str, Any]
     ) -> Any:
-        if event.from_user.id not in (self.approved_users):
+        if event.from_user.id not in (self.approved_users): 
             print('go away', event.from_user.username , event.from_user.id)
             await event.answer('Уходи')
             return

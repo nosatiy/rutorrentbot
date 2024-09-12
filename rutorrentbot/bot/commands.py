@@ -3,6 +3,7 @@ from aiogram.filters.command import Command, CommandObject
 
 from rutracker.session import ru_session
 from bot.keyboards import get_keyboard
+from bot.models import approved_users
 
 commands_router = Router()
 
@@ -12,10 +13,23 @@ async def cmd_start(message: types.Message):
     await message.answer("Hello!")
 
 
+@commands_router.message(Command("add_user"))
+async def cmd_add_user(
+    message: types.Message,
+    command: CommandObject,
+    ):
+    try:
+        approved_users.add(int(command.args))
+        await message.answer("User added!")
+    except:
+        await message.answer("Some error in add user!")
+
+
 @commands_router.message(Command("search"))
 async def cmd_search(
-        message: types.Message,
-        command: CommandObject,):
+    message: types.Message,
+    command: CommandObject,
+    ):
     args = command.args
     if not args:
         await message.answer('Напипши что искать: "/search две деффки и еще одна деффка"')
